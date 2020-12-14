@@ -22,7 +22,6 @@ class TelephoneTypeFactory extends Factory
     public function definition()
     {
         return [
-            //
         ];
     }
 }

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class TelephoneType extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    public function telephones()
+    {
+        return $this->hasMany(Telephone::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TelephoneType;
 use Illuminate\Database\Seeder;
 
 class TelephoneTypeSeeder extends Seeder
@@ -13,6 +14,11 @@ class TelephoneTypeSeeder extends Seeder
      */
     public function run()
     {
-        //
+        TelephoneType::insert([
+            ['name' => 'mobile'],
+            ['name' => 'landline'],
+            ['name' => 'work'],
+            ['name' => 'home'],
+        ]);
     }
 }

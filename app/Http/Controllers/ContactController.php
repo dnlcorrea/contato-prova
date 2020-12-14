@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\Email;
+use App\Models\Telephone;
+use App\Models\TelephoneType;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +18,9 @@ class ContactController extends Controller
      */
     public function index()
     {
-        //
+        return Contact::with([
+            'emails', 'telephones'
+        ])->where('user_id', auth()->id())->get();
     }
 
     /**
@@ -30,21 +36,49 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $contact = Contact::create([
+            'name' => $request->name,
+            'user_id' => auth()->id()
+        ]);
+
+        foreach ($request->telephones as $telephone) {
+            $model = Telephone::create([
+                'telephone' => $telephone['telephone'],
+                'contact_id' => $contact->id,
+                'telephone_type_id' =>
+                    TelephoneType::find($telephone['telephone_type'])->id
+            ]);
+
+            $contact->telephones()->save($model);
+        }
+
+        foreach ($request->emails as $email) {
+            $email = Email::create([
+                'email' => $email,
+                'contact_id' => $contact->id
+            ]);
+
+            $contact->emails()->save(
+                $email
+            );
+        }
+
+        return \response()->noContent();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Contact  $contact
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
-    public function show(Contact $contact)
+    public
+    function show(Contact $contact)
     {
         //
     }
@@ -52,10 +86,11 @@ class ContactController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Contact  $contact
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
-    public function edit(Contact $contact)
+    public
+    function edit(Contact $contact)
     {
         //
     }
@@ -63,11 +98,12 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Contact  $contact
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contact $contact)
+    public
+    function update(Request $request, Contact $contact)
     {
         //
     }
@@ -75,10 +111,11 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Contact  $contact
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Contact $contact)
+    public
+    function destroy(Contact $contact)
     {
         //
     }

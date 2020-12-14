@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\TelephoneTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +16,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia\Inertia::render('Dashboard');
+Route::get('/telephone-types',[TelephoneTypeController::class, 'index']);
+
+Route::get('/contacts', [ContactController::class, 'index']);
+Route::post('/contacts', [ContactController::class, 'store']);
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/home', function () {
+    return view('home');
 })->name('dashboard');
