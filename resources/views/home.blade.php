@@ -56,33 +56,36 @@
                         </v-col>
                     </v-row>
 
-                </v-container>
+                    <v-btn type="submit">create</v-btn>
 
-                <v-btn type="submit">create</v-btn>
+                </v-container>
             </v-form>
 
             <br><br><br>
 
-            <h2>Contacts</h2>
+            <v-container>
+                <h2>Contacts</h2>
 
-            <div v-for="(cont,i) in contacts">
-                <p>Name: @{{ cont.name }}</p>
-                <p>Telephones:</p>
-                <div v-for="(t,i) in cont.telephones" :key="i">
-                    @{{t.telephone}}
+                <div v-for="(cont,i) in contacts">
+                    <p>Name: @{{ cont.name }}</p>
+                    <p>Telephones:</p>
+                    <div v-for="(t,i) in cont.telephones" :key="i">
+                        @{{t.telephone}} (@{{ t.telephone_type.name }})
+                    </div>
+                    <p>Emails:</p>
+                    <div v-for="(e,i) in cont.emails" :key="i">
+                        @{{e.email}}
+                    </div>
+                    <hr>
                 </div>
-                <p>Emails:</p>
-                <div v-for="(e,i) in cont.emails" :key="i">
-                    @{{e.email}}
-                </div>
-                <hr>
-            </div>
-
+            </v-container>
         </v-main>
     </v-app>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js" integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"
+        integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ=="
+        crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
@@ -122,10 +125,14 @@
         },
         created() {
             axios.get('/telephone-types')
-                .then(({data})=>{this.items=data});
+                .then(({data}) => {
+                    this.items = data
+                });
 
             axios.get('/contacts')
-                .then(({data})=>{this.contacts=data});
+                .then(({data}) => {
+                    this.contacts = data
+                });
         }
     })
 </script>
