@@ -18,9 +18,10 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return Contact::with([
-            'emails', 'telephones'
-        ])->where('user_id', auth()->id())->get();
+        return Contact::orderBy('name')
+            ->with([
+                'emails', 'telephones'
+            ])->where('user_id', auth()->id())->get();
     }
 
     /**
@@ -42,16 +43,18 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $contact = Contact::create([
-            'name' => $request->name,
+            'name'    => $request->name,
             'user_id' => auth()->id()
         ]);
 
         foreach ($request->telephones as $telephone) {
             $model = Telephone::create([
-                'telephone' => $telephone['telephone'],
-                'contact_id' => $contact->id,
+                'telephone'         => $telephone['telephone'],
+                'contact_id'        => $contact->id,
                 'telephone_type_id' =>
-                    TelephoneType::find($telephone['telephone_type'])->id
+                    TelephoneType::firstOrCreate([
+                        'name' => $telephone['telephone_type']
+                    ])->id
             ]);
 
             $contact->telephones()->save($model);
@@ -59,7 +62,7 @@ class ContactController extends Controller
 
         foreach ($request->emails as $email) {
             $email = Email::create([
-                'email' => $email,
+                'email'      => $email,
                 'contact_id' => $contact->id
             ]);
 
@@ -68,7 +71,7 @@ class ContactController extends Controller
             );
         }
 
-        return \response()->noContent();
+        return $contact->load(['telephones', 'emails']);
     }
 
     /**
@@ -114,9 +117,10 @@ class ContactController extends Controller
      * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
-    public
-    function destroy(Contact $contact)
+    public function destroy(Contact $contact)
     {
-        //
+        $contact->delete();
+
+        return \response()->noContent();
     }
 }

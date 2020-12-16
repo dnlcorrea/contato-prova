@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Telephone;
+use App\Models\TelephoneType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TelephoneFactory extends Factory
@@ -22,7 +23,8 @@ class TelephoneFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'telephone' => $this->faker->phoneNumber,
+            'telephone_type_id' => TelephoneType::inRandomOrder()->first()->id
         ];
     }
 }

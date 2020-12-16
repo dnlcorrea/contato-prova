@@ -11,13 +11,15 @@ class Telephone extends Model
 
     protected $guarded = [];
 
+    protected $with = ['telephone_type'];
+
     public function contact()
     {
-       $this->belongsTo(Contact::class);
+       return $this->belongsTo(Contact::class);
     }
 
     public function telephone_type()
     {
-        $this->hasOne(TelephoneType::class, 'telephone_type_id');
+        return $this->belongsTo(TelephoneType::class);
     }
 }

@@ -23,6 +23,7 @@ Route::get('/telephone-types',[TelephoneTypeController::class, 'index']);
 
 Route::get('/contacts', [ContactController::class, 'index']);
 Route::post('/contacts', [ContactController::class, 'store']);
+Route::delete('/contacts/{contact}', [ContactController::class, 'destroy']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/home', function () {
     return view('home');
