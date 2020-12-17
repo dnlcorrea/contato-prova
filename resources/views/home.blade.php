@@ -192,11 +192,13 @@
             },
 
             destroy(id) {
-                axios.delete('/contacts/' + id)
-                    .then(() => {
-                        alert("Contato excluido")
-                        this.contacts.splice(this.contacts.findIndex(c => c.id === id), 1)
-                    })
+                if(confirm(`Excluir contato ${this.contacts.find(c => c.id === id).name}?`)) {
+                    axios.delete('/contacts/' + id)
+                        .then(() => {
+                            alert("Contato excluido")
+                            this.contacts.splice(this.contacts.findIndex(c => c.id === id), 1)
+                        })
+                }
             },
 
             submit() {
