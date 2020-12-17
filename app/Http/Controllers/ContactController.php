@@ -48,12 +48,15 @@ class ContactController extends Controller
         ]);
 
         foreach ($request->telephones as $telephone) {
+
+            $type = $telephone['telephone_type'];
+
             $model = Telephone::create([
                 'telephone'         => $telephone['telephone'],
                 'contact_id'        => $contact->id,
                 'telephone_type_id' =>
                     TelephoneType::firstOrCreate([
-                        'name' => $telephone['telephone_type']
+                        'name' => is_string($type) ? $type : $type['name']
                     ])->id
             ]);
 

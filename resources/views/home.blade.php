@@ -18,6 +18,7 @@
                         <v-col sm="12">
                             <v-text-field
                                 v-model="contact.name"
+                                name="name"
                                 label="Name"
                                 required
                             ></v-text-field>
@@ -28,6 +29,7 @@
                         <v-col sm="11">
                             <v-text-field
                                 v-model="contact.emails[i]"
+                                name="email"
                                 label="E-mail"
                                 required
                                 width="100%"
@@ -51,7 +53,8 @@
                     <h3>Telephones</h3>
                     <v-row v-for="(telephone,i) in contact.telephones">
                         <v-col cols="12" sm="4" class="d-flex">
-                            <v-autocomplete
+                            <v-combobox
+                                name="telephone_type"
                                 v-model="telephone.telephone_type"
                                 :items="items"
                                 label="Telephone Type"
@@ -61,6 +64,7 @@
                         </v-col>
                         <v-col cols="12" sm="7">
                             <v-text-field
+                                name="telephone"
                                 v-model="telephone.telephone"
                                 label="Telephone"
                                 class="mb-0"
@@ -123,7 +127,8 @@
                             </div>
 
                             <div>
-                                <v-icon class="pointer" color="red" @click="() => { destroy(cont.id) }">mdi-delete</v-icon>
+                                <v-icon class="pointer" color="red" @click="() => { destroy(cont.id) }">mdi-delete
+                                </v-icon>
                             </div>
 
                         </v-expansion-panel-content>
@@ -144,11 +149,17 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
+    const sorter = (a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+    }
+
     new Vue({
         el: '#app',
         vuetify: new Vuetify(),
         computed: {
-            sortedContacts: v => v.contacts.sort( (a,b) => a.name > b.name )
+            sortedContacts: v => v.contacts.sort(sorter)
         },
         methods: {
             initials(name) {
@@ -169,32 +180,34 @@
             },
 
             removeEmail(index) {
-                const { emails } = this.contact
+                const {emails} = this.contact
                 if (emails.length === 1) return;
                 emails.splice(index, 1);
             },
 
             removeTelephone(index) {
-                const { telephones } = this.contact
+                const {telephones} = this.contact
                 if (telephones.length === 1) return;
                 telephones.splice(index, 1);
             },
 
             destroy(id) {
                 axios.delete('/contacts/' + id)
-                .then(() => {
-                    alert("Contato excluido")
-                    this.contacts.splice(this.contacts.findIndex(c => c.id === id), 1)
-                })
+                    .then(() => {
+                        alert("Contato excluido")
+                        this.contacts.splice(this.contacts.findIndex(c => c.id === id), 1)
+                    })
             },
 
             submit() {
                 axios.post('/contacts', this.contact)
-                    .then(({data})=> {
-                        this.contacts.push(data)
+                    .then(({data}) => {
+                        this.contacts.unshift(data)
                         this.snackbar = true
                         this.message = "Contato criado."
-                    }).catch(error => { console.err(error)});
+                    }).catch(error => {
+                    console.error(error)
+                });
             }
         },
         data: {
